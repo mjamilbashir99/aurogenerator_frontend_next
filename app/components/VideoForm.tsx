@@ -4,7 +4,7 @@ import { useState } from "react";
 import AdvancedOptions from "./AdvancedOptions";
 import ProgressBar from "./ProgressBar";
 
-interface FormData {
+interface VideoFormData {
   videoSubject: string;
   aiModel: string;
   voice: string;
@@ -31,18 +31,18 @@ export default function VideoForm() {
 
     try {
       const formData = new FormData(e.currentTarget);
-      const data = {
+      const data: VideoFormData = {
         videoSubject: formData.get("videoSubject") as string,
-        aiModel: formData.get("aiModel") || "g4f",
-        voice: formData.get("voice") || "en_us_001",
+        aiModel: (formData.get("aiModel") as string) || "g4f",
+        voice: (formData.get("voice") as string) || "en_us_001",
         paragraphNumber: Number(formData.get("paragraphNumber")) || 1,
         automateYoutubeUpload: formData.get("youtubeUploadToggle") === "on",
         useMusic: formData.get("useMusicToggle") === "on",
         zipUrl: formData.get("zipUrl") as string,
         threads: Number(formData.get("threads")) || 2,
-        subtitlesPosition: formData.get("subtitlesPosition") || "center,center",
+        subtitlesPosition: (formData.get("subtitlesPosition") as string) || "center,center",
         customPrompt: formData.get("customPrompt") as string,
-        color: formData.get("subtitlesColor") || "#FFFF00",
+        color: (formData.get("subtitlesColor") as string) || "#FFFF00",
       };
 
       const response = await fetch(`${API_URL}/api/generate`, {
