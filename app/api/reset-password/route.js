@@ -6,7 +6,8 @@ import crypto from "crypto";
 export async function POST(request) {
   await Connection();
   const { email } = await request.json();
-  // Check if user already exists
+
+  // Check if user exists
   const existingUser = await User.findOne({ email });
   if (!existingUser) {
     return NextResponse.json(
@@ -15,9 +16,13 @@ export async function POST(request) {
     );
   }
 
-  const restToken = crypto.rendomBytes(20).toString("hex");
-  const resetPasswordExpiry = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
+  // Generate Reset Token
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  // Hash the Reset Token
+  const resetPasswordExpiry = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+  // TODO: Store `resetToken` and `resetPasswordExpiry` in the database
+
+  return NextResponse.json({ message: "Reset token generated" });
 }
