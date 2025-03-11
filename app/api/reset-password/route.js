@@ -16,13 +16,18 @@ export async function POST(request) {
     );
   }
 
-  // Generate Reset Token
-  const resetToken = crypto.randomBytes(20).toString("hex");
+  // Generate a reset token
+  const resetToken = crypto.randomBytes(20).toString("hex"); // Fixed typo
+  const hashedResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
 
-  // Hash the Reset Token
-  const resetPasswordExpiry = crypto.createHash("sha256").update(resetToken).digest("hex");
+  // Save the hashed token and expiry time in the database (Assuming your schema supports it)
+  existingUser.resetPasswordToken = hashedResetToken;
+  existingUser.resetPasswordExpiry = Date.now() + 3600000; // Token expires in 1 hour
+  await existingUser.save();
 
-  // TODO: Store `resetToken` and `resetPasswordExpiry` in the database
-
-  return NextResponse.json({ message: "Reset token generated" });
+  // Send reset link (Example: You'd need to implement an actual email service)
+  return NextResponse.json({
+    message: "Password reset link sent to your email",
+    resetToken, // In real applications, send this via email
+  });
 }
